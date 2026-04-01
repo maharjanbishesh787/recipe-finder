@@ -1,0 +1,29 @@
+.header {
+  text-align: center;
+  padding: 50px 20px 30px;
+}
+
+.header-icon {
+  font-size: 52px;
+  margin-bottom: 12px;
+  animation: bounce 1.5s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.header-subtitle {
+  color: var(--text-light);
+  font-size: 1rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
