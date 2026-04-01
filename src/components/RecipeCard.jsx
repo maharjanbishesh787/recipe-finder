@@ -13,6 +13,7 @@ function RecipeCard({ recipe }) {
     setIsFavorite(saved.some((r) => r.id === recipe.id));
   }, [recipe.id]);
 
+  // When card is clicked, fetch details and open fullscreen modal
   async function handleCardClick() {
     if (!details) {
       setLoadingDetails(true);
@@ -23,13 +24,39 @@ function RecipeCard({ recipe }) {
     setExpanded(true);
   }
 
+  // Close the fullscreen modal
   function handleClose(e) {
     e.stopPropagation();
     setExpanded(false);
   }
 
+  // Stop clicks inside modal content from closing it
+  function handleModalContentClick(e) {
+    e.stopPropagation();
+  }
+
+  function toggleFavorite(e) {
+    e.stopPropagation();
+    const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
+    if (isFavorite) {
+      localStorage.setItem("favorites", JSON.stringify(saved.filter((r) => r.id !== recipe.id)));
+      setIsFavorite(false);
+    } else {
+      saved.push({ id: recipe.id, title: recipe.title, image: recipe.image });
+      localStorage.setItem("favorites", JSON.stringify(saved));
+      setIsFavorite(true);
+    }
+  }
+
+  function formatTime(minutes) {
+    if (!minutes) return "N/A";
+    if (minutes < 60) return `${minutes} min`;
+    return `${Math.floor(minutes / 60)}h ${minutes % 60}min`;
+  }
+
   return (
     <>
+
       <div className="recipe-card" onClick={handleCardClick}>
         <div className="card-image-wrapper">
           <img
@@ -58,12 +85,16 @@ function RecipeCard({ recipe }) {
       </div>
 
       {expanded && (
+
         <div className="modal-overlay" onClick={handleClose}>
+
 
           <div className="modal-content" onClick={handleModalContentClick}>
 
+           
             <button className="modal-close-btn" onClick={handleClose}>✕</button>
 
+            
             <img
               src={recipe.image}
               alt={recipe.title}
@@ -71,6 +102,7 @@ function RecipeCard({ recipe }) {
               onError={(e) => { e.target.src = "https://via.placeholder.com/600x300?text=No+Image"; }}
             />
 
+            
             <div className="modal-header">
               <h2 className="modal-title">{recipe.title}</h2>
               <div className="card-meta">
@@ -83,7 +115,7 @@ function RecipeCard({ recipe }) {
                 {recipe.vegetarian && (
                   <span className="meta-tag veg">🌱 Vegetarian</span>
                 )}
-
+               
               </div>
             </div>
 
@@ -97,6 +129,7 @@ function RecipeCard({ recipe }) {
               ) : details ? (
                 <div className="modal-two-col">
 
+                  {/* Left column: Ingredients */}
                   <div className="details-section">
                     <h3>🧂 Ingredients</h3>
                     <ul className="ingredients-list">
@@ -105,6 +138,8 @@ function RecipeCard({ recipe }) {
                       ))}
                     </ul>
                   </div>
+
+                  {/* Right column: Instructions */}
                   <div className="details-section">
                     <h3>📋 Instructions</h3>
                     {details.analyzedInstructions?.[0]?.steps?.length > 0 ? (

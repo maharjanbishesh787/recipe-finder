@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./SearchBar.css";
 
+// Each ingredient now has its own emoji
 const SUGGESTIONS = [
   { name: "chicken",  emoji: "🍗" },
   { name: "tomato",   emoji: "🍅" },
@@ -34,7 +35,7 @@ function SearchBar({ onSearch }) {
       const filtered = SUGGESTIONS.filter(
         (s) =>
           s.name.toLowerCase().includes(value.toLowerCase()) &&
-          !tags.includes(s.name) 
+          !tags.includes(s.name)  // don't show already added ingredients
       );
       setSuggestions(filtered.slice(0, 5));
     } else {
@@ -63,7 +64,7 @@ function SearchBar({ onSearch }) {
   }
 
   function handleSuggestionClick(suggestion) {
-    addTag(suggestion.name); 
+    addTag(suggestion.name);  // only add the name, not the emoji
   }
 
   function handleSearch() {
@@ -76,13 +77,18 @@ function SearchBar({ onSearch }) {
     }
   }
 
+  // Find the emoji for a tag name (used to show emoji inside the tag pill)
+  function getEmojiForTag(tagName) {
+    const found = SUGGESTIONS.find((s) => s.name === tagName);
+    return found ? found.emoji : "🍴"; // default emoji if not in list
+  }
 
   return (
     <div className="searchbar-wrapper">
 
       <div className="input-area">
 
-        
+        {/* Show tags with their matching emoji */}
         {tags.map((tag) => (
           <span key={tag} className="tag">
             {getEmojiForTag(tag)} {tag}
@@ -104,7 +110,7 @@ function SearchBar({ onSearch }) {
         <ul className="suggestions-list">
           {suggestions.map((s) => (
             <li key={s.name} onClick={() => handleSuggestionClick(s)} className="suggestion-item">
-              {s.emoji} {s.name} 
+              {s.emoji} {s.name}  
             </li>
           ))}
         </ul>
@@ -117,6 +123,7 @@ function SearchBar({ onSearch }) {
       >
         🔍 Find Recipes
       </button>
+
     </div>
   );
 }
